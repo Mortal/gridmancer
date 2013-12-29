@@ -1,94 +1,136 @@
 // vim:set sw=4 et:
 
-var grid = this.getNavGrid().grid;
-var tileSize = 4;
+///////////////////////////////////////////////////////////////////////////////
+// Our interface to the world.
+// environment.rows and environment.cols specify the dimensions of the grid.
+// environment.croak displays a string in the log (i.e. console.log).
+// environment.add_rect(y1, x1, y2, x2) adds a rectangle
+// from (y1, x1) (inclusive) to (y2, x2) (exclusive).
+// environment.display_edges([e1, e2, ...], color) renders
+// a list of edges with the given color (for debugging).
 
-var rows = (grid.length / tileSize)|0;
-var cols = (grid[0].length / tileSize)|0;
+var environment = {};
 
-function occupied_yx(y, x) {
-    if (y < 0 || x < 0 || y >= rows || x >= cols) return true;
-    return grid[tileSize*y][tileSize*x].length > 0;
-}
+function init_standalone() {
+    var grid = [
+    [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
+    [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+    [1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1],
+    [0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0],
+    [0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0]];
 
-var add_rect = (function (self, addRect) {
-    return function add_rect(y1, x1, y2, x2) {
-        addRect.call(self, tileSize * x1 + tileSize / 2, tileSize * y1 + tileSize / 2, tileSize * (x2 - x1), tileSize * (y2 - y1));
+    var rows = environment.rows = grid.length, cols = environment.cols = grid[0].length;
+    environment.occupied_yx = function occupied_yx(y, x) {
+        if (y < 0 || x < 0 || y >= rows || x >= cols) return true;
+        return !grid[y][x];
     };
-})(this, this.addRect);
-
-var croak = (function (self, say) {
-    return function croak(s) {
-        say.call(self, s);
+    environment.croak = function croak(s) {
+        console.log(s);
     };
-})(this, this.say);
-
-function display_edges(edges, color) {
-    // noop
-}
-
-/*
-var grid = [
-[0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
-[0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-[1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
-[1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1],
-[0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1],
-[0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0],
-[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0]];
-
-var rows = grid.length, cols = grid[0].length;
-function occupied_yx(y, x) {
-    if (y < 0 || x < 0 || y >= rows || x >= cols) return true;
-    return !grid[y][x];
-}
-function croak(s) {
-    console.log(s);
-}
-function add_rect(y1, x1, y2, x2) {
-    var div = document.createElement('div');
-    div.style.position = 'absolute';
-    div.style.top = y1 * 20 + 'px';
-    div.style.left = x1 * 20 + 'px';
-    div.style.height = (y2-y1) * 20 + 'px';
-    div.style.width = (x2-x1) * 20 + 'px';
-    div.style.backgroundColor = 'hsla('+(360*Math.random())+',100%,50%,0.2)';
-    document.documentElement.appendChild(div);
-}
-
-function display_edges(edges, color) {
-    for (var i = 0, l = edges.length; i < l; ++i) {
-        var e = edges[i];
-        var hor = e.u.r == e.v.r;
+    environment.add_rect = function add_rect(y1, x1, y2, x2) {
         var div = document.createElement('div');
         div.style.position = 'absolute';
-        if (hor)
-            div.style.borderTop = '1px solid '+color;
-        else
-            div.style.borderLeft = '1px solid '+color;
-        div.style.left = e.u.c * 20 + 'px';
-        div.style.top = e.u.r * 20 + 'px';
-        if (hor) {
-            div.style.width = (e.v.c - e.u.c) * 20 + 'px';
-            div.style.height = '10px';
-        } else {
-            div.style.height = (e.v.r - e.u.r) * 20 + 'px';
-            div.style.width = '10px';
-        }
+        div.style.top = y1 * 20 + 'px';
+        div.style.left = x1 * 20 + 'px';
+        div.style.height = (y2-y1) * 20 + 'px';
+        div.style.width = (x2-x1) * 20 + 'px';
+        div.style.backgroundColor = 'hsla('+(360*Math.random())+',100%,50%,0.2)';
         document.documentElement.appendChild(div);
-    }
-}
-*/
+    };
 
+    environment.display_edges = function display_edges(edges, color) {
+        for (var i = 0, l = edges.length; i < l; ++i) {
+            var e = edges[i];
+            var hor = e.u.r == e.v.r;
+            var div = document.createElement('div');
+            div.style.position = 'absolute';
+            if (hor)
+                div.style.borderTop = '1px solid '+color;
+            else
+                div.style.borderLeft = '1px solid '+color;
+            div.style.left = e.u.c * 20 + 'px';
+            div.style.top = e.u.r * 20 + 'px';
+            if (hor) {
+                div.style.width = (e.v.c - e.u.c) * 20 + 'px';
+                div.style.height = '10px';
+            } else {
+                div.style.height = (e.v.r - e.u.r) * 20 + 'px';
+                div.style.width = '10px';
+            }
+            document.documentElement.appendChild(div);
+        }
+    };
+}
+
+// When embedded in CodeCombat.
+function init_embedded() {
+
+    var grid = this.getNavGrid().grid;
+    var tileSize = 4;
+
+    var rows = environment.rows = (grid.length / tileSize)|0;
+    var cols = environment.cols = (grid[0].length / tileSize)|0;
+
+    environment.occupied_yx = function occupied_yx(y, x) {
+        if (y < 0 || x < 0 || y >= rows || x >= cols) return true;
+        return grid[tileSize*y][tileSize*x].length > 0;
+    };
+
+    environment.add_rect = (function (self, addRect) {
+        return function add_rect(y1, x1, y2, x2) {
+            addRect.call(self, tileSize * x1 + tileSize / 2, tileSize * y1 + tileSize / 2, tileSize * (x2 - x1), tileSize * (y2 - y1));
+        };
+    })(this, this.addRect);
+
+    environment.croak = (function (self, say) {
+        return function croak(s) {
+            say.call(self, s);
+        };
+    })(this, this.say);
+
+    environment.display_edges = function display_edges(edges, color) {
+        // noop
+    };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Test if we are in CodeCombat.
+var standalone = !this.getNavGrid;
+if (standalone) {
+    init_standalone();
+} else {
+    init_embedded.call(this);
+}
+
+function occupied(v) {
+    return environment.occupied_yx(v.r, v.c);
+}
+
+function new_Array(n) {
+    var a = [];
+    for (var i = 0; i < n; ++i) {
+        a.push(null);
+    }
+    return a;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Cardinal directions.
 var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
 function left_of(d) { return (d+3)%4; }
 function right_of(d) { return (d+1)%4; }
+
+///////////////////////////////////////////////////////////////////////////////
+// A Vertex is an immutable point on the two dimensional grid.
 
 function Vertex(r, c) {
     this.r = r|0;
@@ -99,6 +141,7 @@ Vertex.prototype.equals = function Vertex_equals(other) {
     return this.r == other.r && this.c == other.c;
 };
 
+// Move the point by a unit vector in the given direction.
 Vertex.prototype.add = function Vertex_add(dir) {
     var r = this.r, c = this.c;
     if (dir == UP) --r;
@@ -123,24 +166,20 @@ Vertex.prototype.right_of_vector = function (dir) {
     return this.left_of_vector(right_of(dir));
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// An Edge is an immutable pair of Vertex instances.
 function Edge(u, v) {
     this.u = u;
     this.v = v;
 }
 
-function occupied(v) {
-    return occupied_yx(v.r, v.c);
-}
-
-function new_Array(n) {
-    var a = [];
-    for (var i = 0; i < n; ++i) {
-        a.push(null);
-    }
-    return a;
-}
+///////////////////////////////////////////////////////////////////////////////
+// A CellSet is a mutable map from the two dimensional grid to objects.
+// Points outside the rectangle [0, rows] x [0, cols] map to null.
+// Points inside the rectangle can be changed using set((r, c), v).
 
 function CellSet() {
+    var rows = environment.rows, cols = environment.cols;
     this.a = new_Array(rows+1);
     for (var i = 0; i <= rows; ++i) {
         this.a[i] = new_Array(cols+1);
@@ -149,6 +188,7 @@ function CellSet() {
 }
 
 CellSet.prototype.get = function CellSet_get(v) {
+    var rows = environment.rows, cols = environment.cols;
     if (v.r < 0 || v.r > rows || v.c < 0 || v.c > cols) return null;
     return this.a[v.r][v.c];
 };
@@ -159,6 +199,18 @@ CellSet.prototype.set = function CellSet_set(v, o) {
     this.a[v.r][v.c] = o;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// A BipartiteGraph is a bipartite graph over left vertices l1, l2, ..., lL
+// and right vertices r1, r2, ..., rR.
+// Edges are added with add_edge(l, r).
+// Vertices and edges can be marked or unmarked;
+// the marks are used by max_matching and max_independent_set
+// and their semantics change during execution.
+// Right after max_matching has been called,
+// only edges in the maximum matching and their adjacent vertices are marked.
+// Right after max_independent_set has been called,
+// only vertices in the max independent set are marked.
+
 function BipartiteGraph(L, R) {
     this.L = L;
     this.R = R;
@@ -167,10 +219,11 @@ function BipartiteGraph(L, R) {
     this.marks = new_Array(L*R);
     this.marksL = new_Array(L);
     this.marksR = new_Array(R);
-    for (var i = 0; i < L; ++i) {
+    var i;
+    for (i = 0; i < L; ++i) {
         this.edgeSetsL[i] = [];
     }
-    for (var i = 0; i < R; ++i) {
+    for (i = 0; i < R; ++i) {
         this.edgeSetsR[i] = [];
     }
 }
@@ -189,36 +242,45 @@ BipartiteGraph.prototype.get_mark = function (l, r) {
 };
 
 BipartiteGraph.prototype.max_matching = function () {
+    // The classic augmenting path algorithm.
     function augment() {
-        for (var l = 0; l < this.L; ++l) {
-            if (this.marksL[l]) continue;
-            var seenL = [];
-            var seenR = [];
-            function visit(l) {
-                if (seenL.indexOf(l) != -1) return false;
-                seenL.push(l);
-                for (var i = 0; i < this.edgeSetsL[l].length; ++i) {
-                    var r = this.edgeSetsL[l][i];
-                    if (seenR.indexOf(r) != -1) continue;
-                    seenR.push(r);
-                    if (!this.marksR[r]) {
-                        this.marksR[r] = true;
+        // Explicit recursion stack to avoid cycles.
+        var seenL;
+        var seenR;
+
+        // Depth first search recursive subroutine.
+        var visit = function visit(l) {
+            if (seenL.indexOf(l) != -1) return false;
+            seenL.push(l);
+            for (var i = 0; i < this.edgeSetsL[l].length; ++i) {
+                var r = this.edgeSetsL[l][i];
+                if (seenR.indexOf(r) != -1) continue;
+                seenR.push(r);
+                if (!this.marksR[r]) {
+                    this.marksR[r] = true;
+                    this.set_mark(l, r, true);
+                    return true;
+                }
+                for (var j = 0; j < this.edgeSetsR[r].length; ++j) {
+                    var ll = this.edgeSetsR[r][j];
+                    if (this.get_mark(ll, r) && visit.call(this, ll)) {
                         this.set_mark(l, r, true);
+                        this.set_mark(ll, r, false);
                         return true;
                     }
-                    for (var j = 0; j < this.edgeSetsR[r].length; ++j) {
-                        var ll = this.edgeSetsR[r][j];
-                        if (this.get_mark(ll, r) && visit.call(this, ll)) {
-                            this.set_mark(l, r, true);
-                            this.set_mark(ll, r, false);
-                            return true;
-                        }
-                    }
-                    seenR.pop();
                 }
-                seenL.pop();
-                return false;
+                seenR.pop();
             }
+            seenL.pop();
+            return false;
+        };
+
+        for (var l = 0; l < this.L; ++l) {
+            if (this.marksL[l]) continue;
+
+            seenL = [];
+            seenR = [];
+
             if (visit.call(this, l)) {
                 this.marksL[l] = true;
                 return true;
@@ -233,14 +295,16 @@ BipartiteGraph.prototype.max_independent_set = function () {
     var resultL = [], resultR = [];
     var evenL = [], evenR = [];
 
-    for (var l = 0; l < this.L; ++l) {
+    var i, j, l, r;
+
+    for (l = 0; l < this.L; ++l) {
         if (!this.marksL[l]) {
             evenL.push(l);
             resultL.push(l);
             --remaining;
         }
     }
-    for (var r = 0; r < this.R; ++r) {
+    for (r = 0; r < this.R; ++r) {
         if (!this.marksR[r]) {
             evenR.push(r);
             resultR.push(r);
@@ -251,10 +315,10 @@ BipartiteGraph.prototype.max_independent_set = function () {
     // A node is marked if and only if it has not been visited.
     while (remaining > 0) {
         var oddL = [], oddR = [];
-        for (var i = 0; i < evenL.length; ++i) {
-            var l = evenL[i];
-            for (var j = 0; j < this.edgeSetsL[l].length; ++j) {
-                var r = this.edgeSetsL[l][j];
+        for (i = 0; i < evenL.length; ++i) {
+            l = evenL[i];
+            for (j = 0; j < this.edgeSetsL[l].length; ++j) {
+                r = this.edgeSetsL[l][j];
                 if (this.get_mark(l, r)) continue;
                 if (this.marksR[r]) {
                     oddR.push(r);
@@ -263,10 +327,10 @@ BipartiteGraph.prototype.max_independent_set = function () {
                 }
             }
         }
-        for (var i = 0; i < evenR.length; ++i) {
-            var r = evenR[i];
-            for (var j = 0; j < this.edgeSetsR[r].length; ++j) {
-                var l = this.edgeSetsR[r][j];
+        for (i = 0; i < evenR.length; ++i) {
+            r = evenR[i];
+            for (j = 0; j < this.edgeSetsR[r].length; ++j) {
+                l = this.edgeSetsR[r][j];
                 if (this.get_mark(l, r)) continue;
                 if (this.marksL[l]) {
                     oddL.push(l);
@@ -275,8 +339,8 @@ BipartiteGraph.prototype.max_independent_set = function () {
                 }
             }
         }
-        if (oddL.length + oddR.length == 0) {
-            for (var l = 0; l < this.L; ++l) {
+        if (oddL.length + oddR.length === 0) {
+            for (l = 0; l < this.L; ++l) {
                 if (this.marksL[l]) {
                     oddL.push(l);
                     this.marksL[l] = false;
@@ -285,8 +349,8 @@ BipartiteGraph.prototype.max_independent_set = function () {
                 }
             }
         }
-        if (oddL.length + oddR.length == 0) {
-            for (var r = 0; r < this.R; ++r) {
+        if (oddL.length + oddR.length === 0) {
+            for (r = 0; r < this.R; ++r) {
                 if (this.marksR[r]) {
                     oddR.push(r);
                     this.marksR[r] = false;
@@ -295,16 +359,16 @@ BipartiteGraph.prototype.max_independent_set = function () {
                 }
             }
         }
-        if (oddL.length + oddR.length == 0) {
-            croak("ERROR: no odds?");
+        if (oddL.length + oddR.length === 0) {
+            environment.croak("ERROR: no odds?");
             break;
         }
         evenL = [];
         evenR = [];
-        for (var i = 0; i < oddL.length; ++i) {
-            var l = oddL[i];
-            for (var j = 0; j < this.edgeSetsL[l].length; ++j) {
-                var r = this.edgeSetsL[l][j];
+        for (i = 0; i < oddL.length; ++i) {
+            l = oddL[i];
+            for (j = 0; j < this.edgeSetsL[l].length; ++j) {
+                r = this.edgeSetsL[l][j];
                 if (this.get_mark(l, r)) {
                     evenR.push(r);
                     this.marksR[r] = false;
@@ -313,10 +377,10 @@ BipartiteGraph.prototype.max_independent_set = function () {
                 }
             }
         }
-        for (var i = 0; i < oddR.length; ++i) {
-            var r = oddR[i];
-            for (var j = 0; j < this.edgeSetsR[r].length; ++j) {
-                var l = this.edgeSetsR[r][j];
+        for (i = 0; i < oddR.length; ++i) {
+            r = oddR[i];
+            for (j = 0; j < this.edgeSetsR[r].length; ++j) {
+                l = this.edgeSetsR[r][j];
                 if (this.get_mark(l, r)) {
                     evenL.push(l);
                     this.marksL[l] = false;
@@ -327,25 +391,28 @@ BipartiteGraph.prototype.max_independent_set = function () {
         }
     }
     if (remaining < 0) {
-        croak("ERROR: remaining < 0");
+        environment.croak("ERROR: remaining < 0");
     }
-    for (var l = 0; l < this.L; ++l) {
+    for (l = 0; l < this.L; ++l) {
         this.marksL[l] = false;
     }
-    for (var r = 0; r < this.R; ++r) {
+    for (r = 0; r < this.R; ++r) {
         this.marksR[r] = false;
     }
-    for (var i = 0; i < resultL.length; ++i) {
+    for (i = 0; i < resultL.length; ++i) {
         this.marksL[resultL[i]] = true;
     }
-    for (var i = 0; i < resultR.length; ++i) {
+    for (i = 0; i < resultR.length; ++i) {
         this.marksR[resultR[i]] = true;
     }
 };
 
-var visited = new CellSet();
 
+///////////////////////////////////////////////////////////////////////////////
+
+// Sweep through the grid to discover horizontal edges in yx-increasing order.
 function get_horizontal_edges() {
+    var rows = environment.rows, cols = environment.cols;
     var horizontalEdges = [];
 
     for (var r = 0; r <= rows; ++r) {
@@ -368,9 +435,11 @@ function get_horizontal_edges() {
     return horizontalEdges;
 }
 var horizontalEdges = get_horizontal_edges();
-display_edges(horizontalEdges, 'blue');
+environment.display_edges(horizontalEdges, 'blue');
 
+// Sweep through the grid to discover vertical edges in xy-increasing order.
 function get_vertical_edges() {
+    var rows = environment.rows, cols = environment.cols;
     var verticalEdges = [];
 
     for (var c = 0; c <= cols; ++c) {
@@ -394,8 +463,10 @@ function get_vertical_edges() {
 }
 
 var verticalEdges = get_vertical_edges();
-display_edges(verticalEdges, 'black');
+environment.display_edges(verticalEdges, 'black');
 
+// Given a set of edges, produce a CellSet mapping edge endpoints to the edges
+// and other points to null.
 function edge_set_of_edges(edges) {
     var edgeSet = new CellSet();
     for (var i = 0, l = edges.length; i < l; ++i) {
@@ -406,6 +477,7 @@ function edge_set_of_edges(edges) {
     return edgeSet;
 }
 
+// Like edge_set_of_edges, but mapping to edge indices instead of edges.
 function edge_index_set_of_edges(edges) {
     var edgeSet = new CellSet();
     for (var i = 0, l = edges.length; i < l; ++i) {
@@ -416,6 +488,8 @@ function edge_index_set_of_edges(edges) {
     return edgeSet;
 }
 
+// Checking that every vertical edge meets exactly one horizontal edge in each
+// endpoint (and vice versa), produce the corners of the edges.
 function get_corners(verticalEdges, horizontalEdges) {
     var horizontalEdgeSet = edge_set_of_edges(horizontalEdges);
 
@@ -426,12 +500,12 @@ function get_corners(verticalEdges, horizontalEdges) {
         var eu = horizontalEdgeSet.get(e.u);
         var ev = horizontalEdgeSet.get(e.v);
         if (eu === null) {
-            croak('eu is null?');
+            environment.croak('eu is null?');
         } else {
             corners.push(e.u);
         }
         if (ev === null) {
-            croak('ev is null?');
+            environment.croak('ev is null?');
         } else {
             corners.push(e.v);
         }
@@ -442,6 +516,10 @@ function get_corners(verticalEdges, horizontalEdges) {
 
 var corners = get_corners(verticalEdges, horizontalEdges);
 
+// A point has four neighbors.
+// A point is a corner iff it is a concave or convex corner.
+// A corner is concave iff it has three unoccupied neighbors.
+// A corner is convex iff it has three occupied neighbors.
 function is_corner_concave(v) {
     var c_occupied = 0, c_free = 0;
     for (var dir = 0; dir < 4; ++dir) {
@@ -454,18 +532,22 @@ function is_corner_concave(v) {
         // convex corner
         return false;
     } else {
-        croak("Invalid corner at "+v.r+','+v.c+': '+c_occupied+'/'+c_free);
+        environment.croak("Invalid corner at "+v.r+','+v.c+': '+c_occupied+'/'+c_free);
         return false;
     }
 }
 
 var concaveCorners = [];
+(function () {
 for (var i = 0, l = corners.length; i < l; ++i) {
     if (is_corner_concave(corners[i])) {
         concaveCorners.push(corners[i]);
     }
 }
+})();
 
+// Given a list of concave corners, produce all effective chords
+// (according to the definition of the paper) in the given direction.
 function get_chords(concaveCorners, dir) {
     var chords = [];
     for (var i = 0, l = concaveCorners.length; i < l; ++i) {
@@ -483,7 +565,10 @@ function get_chords(concaveCorners, dir) {
 var horizontalChords = get_chords(concaveCorners, RIGHT);
 var verticalChords = get_chords(concaveCorners, DOWN);
 //var horizontalChordSet = edge_index_set_of_edges(horizontalChords);
-var graph = new BipartiteGraph(horizontalChords.length, verticalChords.length);
+
+// Compute the intersection graph of the chords.
+// Since parallel chords do not intersect, the intersection graph is bipartite.
+var intersectionGraph = new BipartiteGraph(horizontalChords.length, verticalChords.length);
 (function () {
 for (var i = 0; i < horizontalChords.length; ++i) {
     for (var j = 0; j < verticalChords.length; ++j) {
@@ -491,21 +576,22 @@ for (var i = 0; i < horizontalChords.length; ++i) {
         var v = verticalChords[j];
         if (v.u.r <= h.u.r && h.u.r <= v.v.r &&
             h.u.c <= v.u.c && v.u.c <= h.v.c)
-            graph.add_edge(i, j);
+            intersectionGraph.add_edge(i, j);
     }
 }
 })();
-graph.max_matching();
-graph.max_independent_set();
+intersectionGraph.max_matching();
+intersectionGraph.max_independent_set();
 
+// Extract the non-intersecting set of dividers picked by the M.I.S algorithm.
 var horizontalDividers = [];
 var verticalDividers = [];
 (function () {
-for (var l = 0; l < graph.L; ++l) {
-    if (graph.marksL[l]) horizontalDividers.push(horizontalChords[l]);
+for (var l = 0; l < intersectionGraph.L; ++l) {
+    if (intersectionGraph.marksL[l]) horizontalDividers.push(horizontalChords[l]);
 }
-for (var r = 0; r < graph.R; ++r) {
-    if (graph.marksR[r]) verticalDividers.push(verticalChords[r]);
+for (var r = 0; r < intersectionGraph.R; ++r) {
+    if (intersectionGraph.marksR[r]) verticalDividers.push(verticalChords[r]);
 }
 })();
 
@@ -513,6 +599,7 @@ var dividers = [];
 dividers.push.apply(dividers, horizontalDividers);
 dividers.push.apply(dividers, verticalDividers);
 
+// Map divider points to true (used to check for intersections).
 var dividerSpace = new CellSet();
 
 (function () {
@@ -526,6 +613,7 @@ for (var i = 0, l = dividers.length; i < l; ++i) {
 }
 })();
 
+// Keep going in a direction until we hit a wall or a divider.
 function extend_edge(v, dir) {
     while (!occupied(v.left_of_vector(dir)) && !occupied(v.right_of_vector(dir)) && !dividerSpace.get(v))
         v = v.add(dir);
@@ -533,6 +621,9 @@ function extend_edge(v, dir) {
 }
 
 var dividerSet = edge_set_of_edges(dividers);
+
+// Add a divider for each concave corner
+// that is not the endpoint of an existing divider.
 (function () {
 for (var i = 0, l = corners.length; i < l; ++i) {
     if (is_corner_concave(corners[i]) && dividerSet.get(corners[i]) === null) {
@@ -546,9 +637,11 @@ for (var i = 0, l = corners.length; i < l; ++i) {
     }
 }
 })();
-display_edges(horizontalDividers, 'red');
-display_edges(verticalDividers, 'green');
+environment.display_edges(horizontalDividers, 'red');
+environment.display_edges(verticalDividers, 'green');
 
+// Given a set of edges that may only intersect in their endpoints,
+// map each point on an edge except the second endpoint to the edge.
 function edge_space_of_edges(edges) {
     var edgeSpace = new CellSet();
     for (var i = 0, l = edges.length; i < l; ++i) {
@@ -574,6 +667,7 @@ horizontals.push.apply(horizontals, horizontalEdges);
 horizontals.push.apply(horizontals, horizontalDividers);
 var horizontalEdgeSpace = edge_space_of_edges(horizontals);
 
+// Check if a point is a corner of a certain orientation.
 function is_corner(v, cwdir) {
     var space = v.right_of_vector(cwdir);
     return (!occupied(space) &&
@@ -594,6 +688,9 @@ function vertex_below(v) {
     return v.add(DOWN);
 }
 
+// Identify all upper left corners of rectangles
+// and add the appropriate rectangle.
+(function () {
 for (var i = 0, l = horizontals.length; i < l; ++i) {
     var v = horizontals[i].u;
     if (!is_upper_left_corner(v)) continue;
@@ -604,52 +701,6 @@ for (var i = 0, l = horizontals.length; i < l; ++i) {
     while (!is_lower_left_corner(lowerLeft)) lowerLeft = vertex_below(lowerLeft);
     var lowerRight = vertex_right_of(lowerLeft);
     while (!is_lower_right_corner(lowerRight)) lowerRight = vertex_right_of(lowerRight);
-    add_rect(upperLeft.r, upperLeft.c, lowerRight.r, lowerRight.c);
+    environment.add_rect(upperLeft.r, upperLeft.c, lowerRight.r, lowerRight.c);
 }
-
-/*
-var rings = [];
-
-function visit(v) {
-    // Seek to a top-left corner
-    while (!occupied(v.add(UP))) v = v.add(UP);
-    while (!occupied(v.add(LEFT))) v = v.add(LEFT);
-    var vertices = [v];
-    var dir = RIGHT;
-    do {
-        // Invariant: !occupied(v)
-        var turn_to = v.left_of_vector(dir);
-        var ahead = v.right_of_vector(dir);
-        if (!occupied(turn_to)) {
-            vertices.push(v);
-            dir = left_of(dir);
-        } else if (occupied(ahead)) {
-            vertices.push(v);
-            dir = right_of(dir);
-        }
-        v = v.add(dir);
-    } while (!v.equals(vertices[0]));
-    rings.push(vertices);
-}
-
-for (var i = 0; i < rows; ++i) {
-    for (var j = 0; j < cols; ++j) {
-        var v = new Vertex(i, j);
-        if (!occupied(v) && visited.get(v) == null) {
-            visit(v);
-        }
-    }
-}
-*/
-
-/*
-for(var y = 0; y + tileSize < grid.length; y += tileSize) {
-    for(var x = 0; x + tileSize < grid[0].length; x += tileSize) {
-        var occupied = grid[y][x].length > 0;
-        if(!occupied) {
-            this.addRect(x + tileSize / 2, y + tileSize / 2, tileSize, tileSize);
-            this.wait();  // Hover over the timeline to help debug!
-        }
-    }
-}
-*/
+})();
