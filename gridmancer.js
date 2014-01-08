@@ -11,21 +11,71 @@
 
 var environment = {};
 
+var codeCombatGrid = [
+[1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+[1,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0],
+[0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+[0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
+[0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,0,0,0,0,0,0],
+[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+[1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+[1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+[0,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0],
+[0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0],
+[0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0],
+[1,1,1,1,0,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
+
 function init_standalone() {
-    var grid = [
-    [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
-    [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
-    [1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-    [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1],
-    [0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1],
-    [0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0],
-    [0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0]];
+    //var grid = [
+    //[0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
+    //[0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
+    //[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    //[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    //[1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+    //[1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+    //[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    //[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    //[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    //[0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1],
+    //[0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1],
+    //[0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0],
+    //[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0]];
+
+    //var grid = [
+    //[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    //[1,1,1,1,0,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0],
+    //[0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0],
+    //[0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0],
+    //[0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,0],
+    //[0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0],
+    //[0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0],
+    //[0,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0],
+    //[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    //[1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,1,0],
+    //[1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,0],
+    //[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0],
+    //[0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,0],
+    //[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0],
+    //[0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0],
+    //[0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,0],
+    //[0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    //[1,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0],
+    //[1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0],
+    //[1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]];
+
+    var grid = codeCombatGrid;
+
 
     var rows = environment.rows = grid.length, cols = environment.cols = grid[0].length;
     environment.occupied_yx = function occupied_yx(y, x) {
@@ -68,12 +118,25 @@ function init_standalone() {
             document.documentElement.appendChild(div);
         }
     };
+
+    environment.drawEdge = function (e) {
+        var u = e.u, v = e.v;
+        var x = u.c * 20, y = u.r * 20;
+        var w = (v.c - u.c) * 20 + 1, h = (v.r - u.r) * 20 + 1;
+        var div = document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.top = y+'px';
+        div.style.left = x+'px';
+        div.style.width = w+'px';
+        div.style.height = h+'px';
+        div.style.backgroundColor = 'purple';
+    };
 }
 
 // When embedded in CodeCombat.
 function init_embedded() {
 
-    var grid = this.getNavGrid().grid;
+    var grid = this['getNavGrid']()['grid'];
     var tileSize = 4;
 
     var rows = environment.rows = (grid.length / tileSize)|0;
@@ -86,25 +149,51 @@ function init_embedded() {
 
     environment.add_rect = (function (self, addRect) {
         return function add_rect(y1, x1, y2, x2) {
-            addRect.call(self, tileSize * x1 + tileSize / 2, tileSize * y1 + tileSize / 2, tileSize * (x2 - x1), tileSize * (y2 - y1));
+            var w = x2 - x1;
+            var h = y2 - y1;
+            addRect.call(self, tileSize * (x1 + w / 2), tileSize * (y1 + h / 2), tileSize * w, tileSize * h);
         };
-    })(this, this.addRect);
+    })(this, this['addRect']);
+
+    environment.drawEdge = (function (self, addRect) {
+        return function drawEdge(e) {
+            var u = e.u;
+            var v = e.v;
+            var x = u.c * tileSize;
+            var y = u.r * tileSize;
+            var w = (v.c - u.c) * tileSize;
+            var h = (v.r - u.r) * tileSize;
+            addRect.call(self, x + w/2, y + h/2, w + 2, h + 2);
+        };
+    })(this, this['addRect']);
 
     environment.croak = (function (self, say) {
         return function croak(s) {
             say.call(self, s);
         };
-    })(this, this.say);
+    })(this, this['say']);
 
     environment.display_edges = function display_edges(edges, color) {
         // noop
     };
 
+    if (rows != codeCombatGrid.length || cols != codeCombatGrid[0].length) {
+        environment.croak("dims: "+rows+"x"+cols+" != "+codeCombatGrid.length+"x"+codeCombatGrid[0].length);
+    } else {
+        for (var r = 0; r < rows; ++r) {
+            for (var c = 0; c < cols; ++c) {
+                if (!codeCombatGrid[r][c] !== environment.occupied_yx(r, c)) {
+                    environment.croak("cell: "+r+","+c);
+                }
+            }
+        }
+    }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Test if we are in CodeCombat.
-var standalone = !this.getNavGrid;
+var standalone = !this['getNavGrid'];
 if (standalone) {
     init_standalone();
 } else {
@@ -241,53 +330,92 @@ BipartiteGraph.prototype.get_mark = function (l, r) {
     return this.marks[l*this.R + r];
 };
 
-BipartiteGraph.prototype.max_matching = function () {
-    // The classic augmenting path algorithm.
-    function augment() {
-        // Explicit recursion stack to avoid cycles.
-        var seenL;
-        var seenR;
+function RecursionStack(range) {
+    this.range = range;
+    this.stack = [];
+    this.indexes = new_Array(range);
+    for (var i = 0, l = range; i < l; ++i) {
+        this.indexes[i] = -1;
+    }
+}
 
-        // Depth first search recursive subroutine.
-        var visit = function visit(l) {
-            if (seenL.indexOf(l) != -1) return false;
-            seenL.push(l);
-            for (var i = 0; i < this.edgeSetsL[l].length; ++i) {
-                var r = this.edgeSetsL[l][i];
-                if (seenR.indexOf(r) != -1) continue;
-                seenR.push(r);
-                if (!this.marksR[r]) {
-                    this.marksR[r] = true;
-                    this.set_mark(l, r, true);
-                    return true;
-                }
-                for (var j = 0; j < this.edgeSetsR[r].length; ++j) {
-                    var ll = this.edgeSetsR[r][j];
-                    if (this.get_mark(ll, r) && visit.call(this, ll)) {
-                        this.set_mark(l, r, true);
-                        this.set_mark(ll, r, false);
-                        return true;
-                    }
-                }
-                seenR.pop();
-            }
-            seenL.pop();
-            return false;
-        };
+RecursionStack.prototype.push = function (v) {
+    this.indexes[v] = this.stack.length;
+    this.stack.push(v);
+};
 
-        for (var l = 0; l < this.L; ++l) {
-            if (this.marksL[l]) continue;
+RecursionStack.prototype.pop = function () {
+    var v = this.stack[this.stack.length-1];
+    this.indexes[v] = -1;
+    this.stack.pop();
+};
 
-            seenL = [];
-            seenR = [];
+RecursionStack.prototype.indexOf = function (v) {
+    return this.indexes[v];
+};
 
-            if (visit.call(this, l)) {
-                this.marksL[l] = true;
+function DepthFirstSearch() {
+    environment.croak("Init DepthFirstSearch");
+    // Explicit recursion stack to avoid cycles.
+    this.seenL = null;
+    this.seenR = null;
+}
+
+DepthFirstSearch.prototype.augment = function () {
+    environment.croak("augment()");
+    for (var l = 0; l < this.graph.L; ++l) {
+        if (this.graph.marksL[l]) continue;
+
+        this.seenL = new RecursionStack(this.graph.L);
+        this.seenR = new RecursionStack(this.graph.R);
+
+        environment.croak("Visit "+l);
+        if (this.visit(l)) {
+            this.graph.marksL[l] = true;
+            return true;
+        }
+    }
+    return false;
+};
+
+DepthFirstSearch.prototype.visit = function (l) {
+    environment.croak("Visiting "+l);
+    if (this.seenL.indexOf(l) != -1) return false;
+    this.seenL.push(l);
+    for (var i = 0; i < this.graph.edgeSetsL[l].length; ++i) {
+        var r = this.graph.edgeSetsL[l][i];
+        if (this.seenR.indexOf(r) != -1) continue;
+        this.seenR.push(r);
+        if (!this.graph.marksR[r]) {
+            this.graph.marksR[r] = true;
+            this.graph.set_mark(l, r, true);
+            return true;
+        }
+        for (var j = 0; j < this.graph.edgeSetsR[r].length; ++j) {
+            var ll = this.graph.edgeSetsR[r][j];
+            environment.croak("Recursive visit "+ll);
+            if (this.graph.get_mark(ll, r) && this.visit(ll)) {
+                this.graph.set_mark(l, r, true);
+                this.graph.set_mark(ll, r, false);
                 return true;
             }
         }
+        this.seenR.pop();
     }
-    while (augment.call(this)) {}
+    this.seenL.pop();
+    return false;
+};
+
+BipartiteGraph.prototype.max_matching = function () {
+    // The classic augmenting path algorithm.
+    var marks = 0;
+    for (var i = 0; i < this.L; ++i) { if (this.marksL[i]) ++marks; }
+    var dfs = new DepthFirstSearch();
+    dfs.graph = this;
+    environment.croak("marks: "+marks);
+    var paths = 0;
+    while (dfs.augment()) {++paths;}
+    environment.croak("max_matching: "+paths+" augmenting paths");
 };
 
 BipartiteGraph.prototype.max_independent_set = function () {
@@ -436,6 +564,7 @@ function get_horizontal_edges() {
 }
 var horizontalEdges = get_horizontal_edges();
 environment.display_edges(horizontalEdges, 'blue');
+//environment.croak('Detected '+horizontalEdges.length+' horizontal edges');
 
 // Sweep through the grid to discover vertical edges in xy-increasing order.
 function get_vertical_edges() {
@@ -464,6 +593,7 @@ function get_vertical_edges() {
 
 var verticalEdges = get_vertical_edges();
 environment.display_edges(verticalEdges, 'black');
+//environment.croak('Detected '+verticalEdges.length+' vertical edges');
 
 // Given a set of edges, produce a CellSet mapping edge endpoints to the edges
 // and other points to null.
@@ -515,6 +645,7 @@ function get_corners(verticalEdges, horizontalEdges) {
 }
 
 var corners = get_corners(verticalEdges, horizontalEdges);
+environment.croak('Detected '+corners.length+' corners');
 
 // A point has four neighbors.
 // A point is a corner iff it is a concave or convex corner.
@@ -545,6 +676,7 @@ for (var i = 0, l = corners.length; i < l; ++i) {
     }
 }
 })();
+environment.croak('Detected '+concaveCorners.length+' concave corners');
 
 // Given a list of concave corners, produce all effective chords
 // (according to the definition of the paper) in the given direction.
@@ -565,20 +697,37 @@ function get_chords(concaveCorners, dir) {
 var horizontalChords = get_chords(concaveCorners, RIGHT);
 var verticalChords = get_chords(concaveCorners, DOWN);
 //var horizontalChordSet = edge_index_set_of_edges(horizontalChords);
+environment.croak('Detected '+horizontalChords.length+' + '+verticalChords.length+' effective chords');
+/*
+(function () {
+for (var i = 0, l = horizontalChords.length; i < l; ++i) {
+    environment.drawEdge(horizontalChords[i]);
+}
+})();
+(function () {
+for (var i = 0, l = verticalEdges.length; i < l; ++i) {
+    environment.drawEdge(verticalEdges[i]);
+}
+})();
+*/
 
 // Compute the intersection graph of the chords.
 // Since parallel chords do not intersect, the intersection graph is bipartite.
 var intersectionGraph = new BipartiteGraph(horizontalChords.length, verticalChords.length);
 (function () {
+var edges = 0;
 for (var i = 0; i < horizontalChords.length; ++i) {
     for (var j = 0; j < verticalChords.length; ++j) {
         var h = horizontalChords[i];
         var v = verticalChords[j];
         if (v.u.r <= h.u.r && h.u.r <= v.v.r &&
-            h.u.c <= v.u.c && v.u.c <= h.v.c)
+            h.u.c <= v.u.c && v.u.c <= h.v.c) {
             intersectionGraph.add_edge(i, j);
+            ++edges;
+        }
     }
 }
+environment.croak("Added "+edges+" edges");
 })();
 intersectionGraph.max_matching();
 intersectionGraph.max_independent_set();
@@ -598,6 +747,8 @@ for (var r = 0; r < intersectionGraph.R; ++r) {
 var dividers = [];
 dividers.push.apply(dividers, horizontalDividers);
 dividers.push.apply(dividers, verticalDividers);
+
+environment.croak(dividers.length+' '+(horizontalDividers.length+verticalDividers.length)+' dividers');
 
 // Map divider points to true (used to check for intersections).
 var dividerSpace = new CellSet();
@@ -691,6 +842,7 @@ function vertex_below(v) {
 // Identify all upper left corners of rectangles
 // and add the appropriate rectangle.
 (function () {
+var rectangles = 0;
 for (var i = 0, l = horizontals.length; i < l; ++i) {
     var v = horizontals[i].u;
     if (!is_upper_left_corner(v)) continue;
@@ -702,5 +854,7 @@ for (var i = 0, l = horizontals.length; i < l; ++i) {
     var lowerRight = vertex_right_of(lowerLeft);
     while (!is_lower_right_corner(lowerRight)) lowerRight = vertex_right_of(lowerRight);
     environment.add_rect(upperLeft.r, upperLeft.c, lowerRight.r, lowerRight.c);
+    ++rectangles;
 }
+environment.croak("Covered with "+rectangles+" rectangle(s)");
 })();
